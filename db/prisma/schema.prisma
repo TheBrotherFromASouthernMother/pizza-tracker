@@ -1,0 +1,58 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum pizza_type {
+  thin_crust
+  stuffed_crust
+  deep_dish
+}
+
+enum pizza_size {
+  small
+  medium
+  large
+  extra_large
+}
+
+enum order_status {
+  preparing
+  in_progress
+  completed
+  canceled
+}
+
+model orders {
+  id Int @id @default(autoincrement())
+  pizza pizzas[]
+  status order_status
+  customer_email String
+  customer_phone String
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @db.Timestamptz(3)
+}
+
+model pizzas {
+  id Int @id @default(autoincrement())
+  type pizza_type
+  size pizza_size
+  toppings String @default("cheese")
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @db.Timestamptz(3)
+  order orders @relation(fields: [order_id], references: [id])
+  order_id Int
+}
+
+model employees {
+  id Int @id @default(autoincrement())
+  unique_id String
+  password String
+}
